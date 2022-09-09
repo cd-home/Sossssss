@@ -2,13 +2,17 @@ syntax = "proto3";
 
 package hello;
 
+// The go_package option defines the import path of the package which
+// will contain all the generated code for this file.
 option go_package = "./api";
 
 service Greeter {
   rpc SayHello (HelloRequest) returns (HelloReply) {}
 }
 
+// A message is just an aggregate containing a set of typed fields
 message HelloRequest {
+  // 1 2 3 是字段的唯一标记
   string name = 1;
 }
 
