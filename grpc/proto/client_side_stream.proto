@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+package stream;
+
+option go_package = "./api/clientside";
+
+service ClientSideStream {
+  rpc SendStreamToService(stream ClientRequest) returns (ServiceReply) {}
+}
+
+message ClientRequest {
+  string streamValue = 1;
+}
+
+message ServiceReply {
+  string code = 1;
+  string value = 2;
+}
