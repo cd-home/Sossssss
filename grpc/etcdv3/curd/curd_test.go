@@ -7,18 +7,18 @@ import (
 	"time"
 )
 
-func GetEtcdClient() (client *clientv3.Client, err error) {
-	client, err = clientv3.New(clientv3.Config{
-		Endpoints:   []string{"127.0.0.1:2379"},
+func GetEtcdClient() (*clientv3.Client, error) {
+	client, err := clientv3.New(clientv3.Config{
+		Endpoints:   []string{"10.211.55.18:2379"},
 		DialTimeout: 5 * time.Second,
 	})
 	if err != nil {
 		return nil, err
 	}
-	return
+	return client, nil
 }
 
-func TestEtcdKV(t *testing.T) {
+func TestEtcdKVPut(t *testing.T) {
 	// 创建客户端
 	client, err := GetEtcdClient()
 	if err != nil {
@@ -31,7 +31,7 @@ func TestEtcdKV(t *testing.T) {
 	math, _ := kv.Put(context.TODO(), "/lesson/math", "100")
 	t.Log(math)
 
-	english, _ := kv.Put(context.TODO(), "/lesson/English", "90")
+	english, _ := kv.Put(context.TODO(), "/lesson/english", "90")
 	t.Log(english)
 
 	// 获取目录下面所有, 第三个参数with...用来限制，有很多选项
@@ -40,31 +40,55 @@ func TestEtcdKV(t *testing.T) {
 		t.Log(string(v.Key))
 		t.Log(string(v.Value))
 	}
+}
 
+func TestEtcdKVDelete(t *testing.T) {
+	client, err := GetEtcdClient()
+	if err != nil {
+		t.Log(err)
+		return
+	}
+	kv := clientv3.NewKV(client)
 	// 有这个前缀的批量删除
-	kv.Delete(context.TODO(), "/lesson/",
+	_, err = kv.Delete(context.TODO(), "/lesson/",
 		clientv3.WithPrefix(),  // 前缀
 		clientv3.WithFromKey(), // 按序
 	)
+	if err != nil {
+		return
+	}
 	//  DO操作
 	op := clientv3.OpGet("/lesson/", clientv3.WithLimit(3))
 	resp, _ := kv.Do(context.TODO(), op)
 	t.Log(resp.Get().Kvs)
 }
 
-func TestEtcdLease(t *testing.T) {
-	// 创建客户端
+func TestEtcdKVOp(t *testing.T) {
 	client, err := GetEtcdClient()
 	if err != nil {
+		t.Log(err)
 		return
 	}
 	// 创建读写对象
 	kv := clientv3.NewKV(client)
 
+	// OP DO操作
+	op := clientv3.OpGet("/lesson/", clientv3.WithLimit(3))
+	resp, _ := kv.Do(context.TODO(), op)
+	t.Log(resp.Get().Kvs)
+}
+
+func TestEtcdLease(t *testing.T) {
+	client, err := GetEtcdClient()
+	if err != nil {
+		return
+	}
+	kv := clientv3.NewKV(client)
 	// 创建租约
 	lease := clientv3.NewLease(client)
 	leaseR, _ := lease.Grant(context.TODO(), 10)
-	// 使用租约put
+
+	// 使用租约put [绑定key]
 	putR, _ := kv.Put(context.TODO(), "/corn/lock/job", "100", clientv3.WithLease(leaseR.ID))
 	t.Log(putR.Header.Revision)
 
@@ -85,12 +109,10 @@ func TestEtcdLease(t *testing.T) {
 }
 
 func TestEtcdKeepAliveLease(t *testing.T) {
-	// 创建客户端
 	client, err := GetEtcdClient()
 	if err != nil {
 		return
 	}
-	// 创建读写对象
 	kv := clientv3.NewKV(client)
 
 	// 创建租约
@@ -98,8 +120,9 @@ func TestEtcdKeepAliveLease(t *testing.T) {
 	leaseR, _ := lease.Grant(context.TODO(), 10)
 
 	// 自动续租, 可以超时取消或者可以取消
-	ctx, cancle := context.WithCancel(context.Background())
-	defer cancle()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+	// 自动续租
 	keepChan, _ := lease.KeepAlive(ctx, leaseR.ID)
 
 	// 监听续租情况
@@ -169,21 +192,19 @@ func TestEtcdWatch(t *testing.T) {
 		for _, event := range watchChange.Events {
 			switch event.Type {
 			case 0:
-				t.Log("put OP")
+				t.Log("PUT OP")
 			case 1:
-				t.Log("delete OP")
+				t.Log("DELETE OP")
 			}
 		}
 	}
 }
 
 func TestEtcdLock(t *testing.T) {
-	// 创建客户端
 	client, err := GetEtcdClient()
 	if err != nil {
 		return
 	}
-	// 创建读写对象
 	kv := clientv3.NewKV(client)
 
 	// 以申请租约，创建
@@ -192,8 +213,8 @@ func TestEtcdLock(t *testing.T) {
 	leaseR, _ := lease.Grant(context.TODO(), 5)
 
 	// 取消租约
-	ctx, cancle := context.WithCancel(context.Background())
-	defer cancle()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 	defer lease.Revoke(context.TODO(), leaseR.ID)
 
 	// 自动续约
@@ -223,7 +244,7 @@ func TestEtcdLock(t *testing.T) {
 		// 模拟代码
 		time.Sleep(time.Second * 5)
 		//  释放锁
-		cancle()
+		cancel()
 		t.Log("释放锁")
 	}
 }
