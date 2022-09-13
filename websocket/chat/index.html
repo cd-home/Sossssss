@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>CHAT</title>
+</head>
+<body>
+
+</body>
+<script>
+    ;(() => {
+        let ws = new WebSocket(`ws://127.0.0.1:9999/ws`)
+        let data = {"from": "node"}
+        ws.onopen = (ev) => {
+            ws.send(JSON.stringify(data))
+        }
+        ws.onmessage = (ev) => {
+            console.log(ev.data)
+            let data = {"from": "node"}
+            data.from = data.from + ev.data
+            ws.send(JSON.stringify(data))
+        }
+        ws.onclose = (ev) => {
+            console.log(ev.reason)
+        }
+        ws.onclose = (ev) => {
+            console.log(ev.reason)
+        }
+    })()
+</script>
+</html>
