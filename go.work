@@ -4,4 +4,6 @@ use (
 	./grpc
 	./rabbitmq
 	./websocket
+	./api
+	./apps
 )
