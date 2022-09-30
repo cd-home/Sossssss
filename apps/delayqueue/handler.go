@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/gin-gonic/gin"
 	"net/http"
+	"time"
 )
 
 func AddJob(ctx *gin.Context) {
@@ -13,11 +14,14 @@ func AddJob(ctx *gin.Context) {
 		ctx.JSON(http.StatusOK, err)
 		return
 	}
+	// Add job
 	err = job.Add(context.Background(), job.ID)
 	if err != nil {
 		ctx.JSON(http.StatusOK, err)
 		return
 	}
+	// Add delay queue
+	job.Delay = job.Delay + float64(time.Now().Unix())
 	bucket := &Bucket{JobID: job.ID, TimeStamp: job.Delay}
 	err = bucket.Add(context.Background(), <-bucketNameCh, job.Delay, job.ID)
 	if err != nil {
