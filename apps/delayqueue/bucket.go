@@ -20,7 +20,7 @@ func (b *Bucket) Add(ctx context.Context, key string, score float64, jobID strin
 
 func (b *Bucket) Get(ctx context.Context, key string) error {
 	z, err := rdb.ZRangeWithScores(ctx, key, 0, 0).Result()
-	if errors.Is(err, redis.Nil) {
+	if errors.Is(err, redis.Nil) || len(z) == 0 {
 		return KeyNotExist
 	}
 	if err != nil {

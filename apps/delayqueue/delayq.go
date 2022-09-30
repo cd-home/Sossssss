@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"errors"
 	"log"
 	"strconv"
 	"time"
@@ -48,12 +49,13 @@ func generateBucketName() (<-chan string, chan struct{}) {
 func StartTimers() {
 	timers = make([]*time.Ticker, BucketSize)
 	for i := 0; i < BucketSize; i++ {
-		timer := time.NewTicker(time.Second)
+		timer := time.NewTicker(time.Second * 2)
 		timers[i] = timer
 		bucketName := <-bucketNameCh
 		stop := make(chan struct{})
 		go func() {
 			defer close(stop)
+			defer timer.Stop()
 			for {
 				select {
 				case now := <-timer.C:
@@ -70,6 +72,9 @@ func ScanBucket(now time.Time, bucketName string) {
 	for {
 		// Get Bucket
 		err := bucket.Get(ctx, bucketName)
+		if errors.Is(err, KeyNotExist) {
+			return
+		}
 		if err != nil {
 			log.Println(err)
 			return
