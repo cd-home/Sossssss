@@ -6,4 +6,5 @@ use (
 	./websocket
 	./api
 	./apps
+	./redis
 )

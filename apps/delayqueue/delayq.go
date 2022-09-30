@@ -67,6 +67,7 @@ func ScanBucket(now time.Time, bucketName string) {
 	ctx := context.Background()
 	bucket := &Bucket{}
 	for {
+		// Get Bucket
 		err := bucket.Get(ctx, bucketName)
 		if err != nil {
 			log.Println(err)
@@ -75,11 +76,25 @@ func ScanBucket(now time.Time, bucketName string) {
 		if bucket.TimeStamp > float64(now.Unix()) {
 			return
 		}
+		// Get Job
 		job := &Job{}
 		err = job.Get(ctx, bucket.JobID)
 		if err != nil {
 			return
 		}
-
+		// Push Ready Queue
+		readyQ := &ReadyQ{
+			Topic: job.Topic,
+			JobId: job.ID,
+		}
+		err = readyQ.Push(ctx)
+		if err != nil {
+			return
+		}
+		// Delete
+		err = bucket.Remove(ctx, bucketName, job.ID)
+		if err != nil {
+			return
+		}
 	}
 }
