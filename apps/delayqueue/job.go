@@ -8,11 +8,11 @@ import (
 )
 
 type Job struct {
-	Topic string `json:"topic"`
-	ID    string `json:"id"`
-	Delay int64  `json:"delay"`
-	TTR   int64  `json:"ttr"`
-	Body  string `json:"body"`
+	Topic string  `json:"topic"`
+	ID    string  `json:"id"`
+	Delay float64 `json:"delay"`
+	TTR   float64 `json:"ttr"`
+	Body  string  `json:"body"`
 }
 
 func (j *Job) Get(ctx context.Context, key string) error {
