@@ -45,5 +45,11 @@ func PopJob(ctx *gin.Context) {
 		ctx.JSON(http.StatusOK, err)
 		return
 	}
+	// 消费job后移除
+	err = job.Remove(ctx, job.ID)
+	if err != nil {
+		ctx.JSON(http.StatusOK, err)
+		return
+	}
 	ctx.JSON(http.StatusOK, job)
 }
