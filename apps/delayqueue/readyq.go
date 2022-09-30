@@ -8,7 +8,8 @@ import (
 )
 
 const (
-	timeout = time.Second * 2
+	timeout      = time.Second * 2
+	ReadyQPrefix = "Queue_"
 )
 
 type ReadyQ struct {
@@ -17,11 +18,11 @@ type ReadyQ struct {
 }
 
 func (r *ReadyQ) Push(ctx context.Context) error {
-	return rdb.RPush(ctx, r.Topic, r.JobId).Err()
+	return rdb.RPush(ctx, ReadyQPrefix+r.Topic, r.JobId).Err()
 }
 
 func (r *ReadyQ) Pop(ctx context.Context) (string, error) {
-	jobs, err := rdb.BLPop(ctx, timeout, r.Topic).Result()
+	jobs, err := rdb.BLPop(ctx, timeout, ReadyQPrefix+r.Topic).Result()
 	if errors.Is(err, redis.Nil) {
 		return "", KeyNotExist
 	}

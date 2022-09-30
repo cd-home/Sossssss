@@ -7,6 +7,8 @@ import (
 	"github.com/go-redis/redis/v9"
 )
 
+const JobPrefix = "Job_"
+
 type Job struct {
 	Topic string  `json:"topic"`
 	ID    string  `json:"id"`
@@ -16,7 +18,7 @@ type Job struct {
 }
 
 func (j *Job) Get(ctx context.Context, key string) error {
-	jobBytes, err := rdb.Get(ctx, key).Bytes()
+	jobBytes, err := rdb.Get(ctx, JobPrefix+key).Bytes()
 	if errors.Is(err, redis.Nil) {
 		return KeyNotExist
 	}
@@ -32,9 +34,9 @@ func (j *Job) Add(ctx context.Context, key string) error {
 	if err != nil {
 		return err
 	}
-	return rdb.Set(ctx, key, jobBytes, redis.KeepTTL).Err()
+	return rdb.Set(ctx, JobPrefix+key, jobBytes, redis.KeepTTL).Err()
 }
 
 func (j *Job) Remove(ctx context.Context, key string) error {
-	return rdb.Del(ctx, key).Err()
+	return rdb.Del(ctx, JobPrefix+key).Err()
 }
