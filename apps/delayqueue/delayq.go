@@ -20,10 +20,11 @@ var (
 
 func init() {
 	bucketNameCh, stopBucketNameCh = generateBucketName()
+	StartTimers()
 }
 
 func generateBucketName() (<-chan string, chan struct{}) {
-	bucketName := make(chan string)
+	bucketNameCh := make(chan string)
 	stop := make(chan struct{})
 	go func() {
 		defer close(stop)
@@ -32,7 +33,7 @@ func generateBucketName() (<-chan string, chan struct{}) {
 			select {
 			case <-stop:
 				return
-			case bucketName <- BucketBase + strconv.Itoa(i):
+			case bucketNameCh <- BucketBase + strconv.Itoa(i):
 				if i >= BucketSize {
 					i = 1
 				} else {
@@ -41,7 +42,7 @@ func generateBucketName() (<-chan string, chan struct{}) {
 			}
 		}
 	}()
-	return bucketName, stop
+	return bucketNameCh, stop
 }
 
 func StartTimers() {
@@ -80,7 +81,8 @@ func ScanBucket(now time.Time, bucketName string) {
 		job := &Job{}
 		err = job.Get(ctx, bucket.JobID)
 		if err != nil {
-			return
+			log.Printf("Get Job [%s] Failed", bucket.JobID)
+			continue
 		}
 		// Push Ready Queue
 		readyQ := &ReadyQ{
@@ -89,7 +91,8 @@ func ScanBucket(now time.Time, bucketName string) {
 		}
 		err = readyQ.Push(ctx)
 		if err != nil {
-			return
+			log.Printf("Push Job [%s] To ReadyQ Failed", readyQ.JobId)
+			continue
 		}
 		// Delete
 		err = bucket.Remove(ctx, bucketName, job.ID)
