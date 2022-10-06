@@ -6,4 +6,5 @@ use (
 	./rabbitmq
 	./redis
 	./websocket
+	./elastic
 )
