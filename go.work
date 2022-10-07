@@ -7,4 +7,5 @@ use (
 	./redis
 	./websocket
 	./elastic
+	./sqlx
 )
