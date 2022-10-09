@@ -1,8 +1,9 @@
 package main
 
 import (
+	"context"
 	"fmt"
-	"github.com/streadway/amqp"
+	amqp "github.com/rabbitmq/amqp091-go"
 	"log"
 	"strconv"
 )
@@ -33,12 +34,14 @@ func main() {
 	}
 	for i := 0; i < 10; i++ {
 		data := fmt.Sprintf("Hello Work Queue: %s", strconv.Itoa(i))
-		err = ch.Publish(
+		err = ch.PublishWithContext(
+			context.Background(),
 			"",
 			q.Name,
 			false,
 			false,
 			amqp.Publishing{
+				// 都要采用持久化方式, 避免消息丢失
 				DeliveryMode: amqp.Persistent,
 				ContentType:  "text/plain",
 				Body:         []byte(data),

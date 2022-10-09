@@ -1,8 +1,10 @@
 package main
 
 import (
-	"github.com/streadway/amqp"
+	"context"
+	amqp "github.com/rabbitmq/amqp091-go"
 	"log"
+	"time"
 )
 
 func main() {
@@ -19,8 +21,9 @@ func main() {
 	if err != nil {
 		log.Println(err)
 	}
-	body := "Hello World 2!"
-	err = ch.Publish(
+	body := "Hello World" + time.Now().Format(time.RFC3339)
+	err = ch.PublishWithContext(
+		context.Background(),
 		"",
 		q.Name,
 		false,

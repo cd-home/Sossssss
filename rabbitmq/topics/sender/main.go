@@ -1,7 +1,8 @@
 package main
 
 import (
-	"github.com/streadway/amqp"
+	"context"
+	amqp "github.com/rabbitmq/amqp091-go"
 	"log"
 )
 
@@ -25,7 +26,7 @@ func main() {
 	// *.orange.*
 	// .*.rabbit
 	// lazy.#
-	err = ch.Publish("logs_topic", "lazy.#", false, false, amqp.Publishing{
+	err = ch.PublishWithContext(context.Background(), "logs_topic", "lazy.#", false, false, amqp.Publishing{
 		ContentType: "",
 		Body:        []byte("Hello"),
 	})

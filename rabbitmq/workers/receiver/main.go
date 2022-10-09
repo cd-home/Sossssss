@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/streadway/amqp"
+	amqp "github.com/rabbitmq/amqp091-go"
 	"log"
 	"time"
 )
@@ -39,7 +39,7 @@ func main() {
 		q.Name,
 		"",
 		false,
-		false, // autoAck = false, 采用手动确认方式
+		false, // autoAck = false, 采用手动确认方式, 自动模式可能存在消息丢失情况
 		false,
 		false, nil,
 	)
