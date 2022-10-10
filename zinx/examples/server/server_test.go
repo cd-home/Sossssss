@@ -1,4 +1,4 @@
-package zinx
+package main
 
 import (
 	"net"

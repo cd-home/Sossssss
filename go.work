@@ -8,4 +8,5 @@ use (
 	./websocket
 	./elastic
 	./sqlx
+	./zinx
 )

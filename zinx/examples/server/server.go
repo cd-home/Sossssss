@@ -1,7 +1,8 @@
 package main
 
-func main() {
-	//s := NewServer("s", "tcp", "localhost", "9090")
-	//s.Start()
+import "zinx"
 
+func main() {
+	s := zinx.NewServer("s", "tcp", "localhost", "8080")
+	s.Start()
 }
