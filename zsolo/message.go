@@ -1,4 +1,4 @@
-package zinx
+package zsolo
 
 type Message struct {
 	Len  uint32

@@ -1,10 +1,11 @@
-package zinx
+package zsolo
 
 import (
 	"bytes"
 	"encoding/binary"
 )
 
+// defaultHeadLen len[4] + msgID[4] 8个字节
 const defaultHeadLen uint32 = 8
 
 type DataPack struct {
@@ -18,7 +19,7 @@ func (d *DataPack) HeadLen() uint32 {
 	return defaultHeadLen
 }
 
-func (d *DataPack) Pack(msg Message) ([]byte, error) {
+func (d *DataPack) Pack(msg *Message) ([]byte, error) {
 	buf := bytes.NewBuffer([]byte{})
 	if err := binary.Write(buf, binary.LittleEndian, msg.MsgLen()); err != nil {
 		return nil, err
