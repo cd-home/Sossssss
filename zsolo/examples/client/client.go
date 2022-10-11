@@ -4,7 +4,6 @@ import (
 	"io"
 	"log"
 	"net"
-	"time"
 	"zinx"
 )
 
@@ -15,7 +14,7 @@ func main() {
 	}
 	for {
 		dp := zsolo.NewDataPack()
-		msg := zsolo.NewMessage(1, []byte("Hello"))
+		msg := zsolo.NewMessage(0, []byte("Hello"))
 		data, err := dp.Pack(msg)
 		if err != nil {
 			return
@@ -46,6 +45,7 @@ func main() {
 			}
 			log.Println(string(msgHead.Data))
 		}
-		time.Sleep(2 * time.Second)
+		//time.Sleep(2 * time.Second)
+		break
 	}
 }

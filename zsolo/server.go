@@ -47,6 +47,9 @@ func (s *Server) Run() {
 		}
 		// TODO how to gen connection id
 		conn := NewConnection(s, tcpConn, "")
+		// 添加到链接管理
+		s.CM.Add(conn)
+		// 链接数据处理
 		go conn.Start()
 	}
 }

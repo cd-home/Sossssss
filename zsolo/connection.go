@@ -30,7 +30,6 @@ func NewConnection(s *Server, conn net.Conn, id string) *Connection {
 		msgCh:     make(chan []byte),
 		state:     true,
 	}
-	c.TcpServer.CM.Add(c)
 	return c
 }
 
@@ -48,7 +47,7 @@ func (c *Connection) Start() {
 }
 
 func (c *Connection) Send() {
-	log.Printf("[%s] Connection Send G is Running...", c.ID)
+	log.Printf("[%s] Connection Send G is Running.", c.ID)
 	defer log.Printf("[%s] Connection Send G was Stop.", c.ID)
 	for {
 		select {
