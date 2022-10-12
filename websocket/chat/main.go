@@ -84,6 +84,7 @@ func subscribe(ctx context.Context, suber *subscriber) {
 	for {
 		select {
 		case msg := <-suber.msg:
+			//wsjson.Write(ctx, suber.ws, msg)
 			_ = suber.ws.Write(ctx, websocket.MessageText, msg)
 		case t := <-beat:
 			_ = suber.ws.Write(ctx, websocket.MessageText, []byte(t.Format("20060102150405")))
