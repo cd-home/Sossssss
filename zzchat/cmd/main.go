@@ -6,5 +6,8 @@ import (
 )
 
 func main() {
+	// rpc service
+
+	// api service
 	log.Fatal(router.SetUpRouter().Run(":8080"))
 }
