@@ -57,6 +57,7 @@ func Subscribe(w http.ResponseWriter, r *http.Request) {
 	ChatManager.mu.Lock()
 	ChatManager.subscriber[suber] = struct{}{}
 	ChatManager.mu.Unlock()
+	// 可以启动新的 goroutine, 或者 不用, 本身链接进来就是启动了goroutine
 	go subscribe(context.Background(), suber)
 }
 
