@@ -13,8 +13,8 @@ func main() {
 		log.Println(err)
 	}
 	for {
-		dp := zsolo.NewDataPack()
-		msg := zsolo.NewMessage(0, []byte("Hello"))
+		dp := zine.NewDataPack()
+		msg := zine.NewMessage(0, []byte("Hello"))
 		data, err := dp.Pack(msg)
 		if err != nil {
 			return
@@ -24,7 +24,7 @@ func main() {
 		conn.Write(data)
 
 		// Read
-		dp2 := zsolo.NewDataPack()
+		dp2 := zine.NewDataPack()
 		head := make([]byte, dp2.HeadLen())
 		_, err = io.ReadFull(conn, head)
 		if err != nil {

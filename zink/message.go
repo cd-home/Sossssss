@@ -1,4 +1,4 @@
-package zsolo
+package zine
 
 type Message struct {
 	Len  uint32

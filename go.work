@@ -8,6 +8,6 @@ use (
 	./websocket
 	./elastic
 	./sqlx
-	./zsolo
-	./zzchat
+	./zine
+	./zind
 )

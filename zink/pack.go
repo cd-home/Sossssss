@@ -1,4 +1,4 @@
-package zsolo
+package zine
 
 import (
 	"bytes"
