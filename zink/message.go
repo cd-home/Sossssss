@@ -1,4 +1,4 @@
-package zine
+package zink
 
 type Message struct {
 	Len  uint32

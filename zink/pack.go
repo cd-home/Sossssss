@@ -1,4 +1,4 @@
-package zine
+package zink
 
 import (
 	"bytes"
