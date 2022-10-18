@@ -38,10 +38,11 @@ func main() {
 	msgs, err := ch.Consume(
 		q.Name,
 		"",
-		false,
 		false, // autoAck = false, 采用手动确认方式, 自动模式可能存在消息丢失情况
 		false,
-		false, nil,
+		false,
+		false,
+		nil,
 	)
 	if err != nil {
 		log.Println(err)
