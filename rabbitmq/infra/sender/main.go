@@ -17,7 +17,7 @@ func main() {
 		t := time.Now().Format(time.RFC3339)
 		select {
 		case <-time.After(time.Second * 2):
-			// Push 失败的原因可能是什么?
+			// Push 失败的原因可能是什么? 服务宕机, 网络故障等
 			err := c.Push([]byte(t))
 			// TODO 是否需要重新初始化
 			if err != nil {
@@ -30,7 +30,7 @@ func main() {
 }
 
 const (
-	reconnectDelay = time.Second * 5
+	reconnectDelay = time.Second * 2
 	reInitDelay    = time.Second * 3
 	resendDelay    = time.Second * 2
 )
@@ -55,18 +55,21 @@ func New(queue, addr string) *Client {
 		logger: log.New(os.Stdout, "", log.LstdFlags),
 		done:   make(chan bool),
 	}
-	go client.Reconnect(addr)
+	// 同步较为稳妥
+	// go client.Reconnect(addr)
+	client.Reconnect(addr)
 	return client
 }
 
 func (c *Client) Reconnect(addr string) {
-	for {
+	retries := 3
+	for i := 0; i < retries; i++ {
 		c.isReady = false
-		c.logger.Println("Attempting to connect")
+		c.logger.Printf("Attempting to connect [%d]", i)
 		conn, err := c.connect(addr)
 		// 重连
 		if err != nil {
-			c.logger.Println("Failed to connect")
+			c.logger.Printf("Failed to connect")
 			select {
 			case <-c.done:
 				return
@@ -78,6 +81,29 @@ func (c *Client) Reconnect(addr string) {
 			break
 		}
 	}
+	if !c.isReady {
+		log.Fatal("Connect RabbitMQ Failed.")
+	}
+	/*
+		for {
+			c.isReady = false
+			c.logger.Println("Attempting to connect")
+			conn, err := c.connect(addr)
+			// 重连
+			if err != nil {
+				c.logger.Println("Failed to connect")
+				select {
+				case <-c.done:
+					return
+				case <-time.After(reconnectDelay):
+				}
+				continue
+			}
+			if done := c.reInit(conn); done {
+				break
+			}
+		}
+	*/
 }
 
 func (c *Client) connect(addr string) (*amqp.Connection, error) {
@@ -153,11 +179,11 @@ func (c *Client) Push(data []byte) error {
 	if !c.isReady {
 		return errors.New("client Not Ready")
 	}
-	for {
-		// 多次Push是否有问题
+	// 修改为重试次数会不会更好一点, 防止调用方大量的Push操作阻塞住
+	retries := 3
+	for i := 0; i < retries; i++ {
 		err := c.UnSafePush(data)
 		if err != nil {
-			c.logger.Println("Push Failed, Retrying...")
 			select {
 			case <-c.done:
 				return errors.New("server shutdown")
@@ -165,24 +191,47 @@ func (c *Client) Push(data []byte) error {
 			}
 			continue
 		}
-		select {
-		case confirm := <-c.notifyConfirm:
-			if confirm.Ack {
-				c.logger.Println("Push confirmed")
-				return nil
-			}
-		case <-time.After(resendDelay):
+		// 同步等待确认, 同步的方式会造成效率低
+		if confirm := <-c.notifyConfirm; confirm.Ack {
+			c.logger.Println("Push confirmed")
+			return nil
+		} else {
+			// TODO 发送成功, 但是没有接受到ack
 		}
-		// 没有收到MQ的确认, 进行重发
-		c.logger.Println("Push do not confirmed. Retrying...")
 	}
+	return nil
+	/*
+		for {
+			// 多次Push是否有问题
+			err := c.UnSafePush(data)
+			if err != nil {
+				c.logger.Println("Push Failed, Retrying...")
+				select {
+				case <-c.done:
+					return errors.New("server shutdown")
+				case <-time.After(resendDelay):
+				}
+				continue
+			}
+			select {
+			case confirm := <-c.notifyConfirm:
+				if confirm.Ack {
+					c.logger.Println("Push confirmed")
+					return nil
+				}
+			case <-time.After(resendDelay):
+			}
+			// 没有收到MQ的确认, 进行重发
+			c.logger.Println("Push do not confirmed. Retrying...")
+		}
+	*/
 }
 
 func (c *Client) UnSafePush(data []byte) error {
 	if !c.isReady {
 		return errors.New("client Not Ready")
 	}
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second*10)
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second*2)
 	defer cancel()
 	return c.channel.PublishWithContext(
 		ctx,
