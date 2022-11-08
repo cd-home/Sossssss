@@ -2,6 +2,7 @@ package main
 
 import (
 	"flag"
+	"fmt"
 	amqp "github.com/rabbitmq/amqp091-go"
 	"log"
 )
@@ -18,17 +19,19 @@ func main() {
 	if err != nil {
 		log.Println(err)
 	}
-	err = ch.ExchangeDeclare("logs", "fanout", true, false, false, false, nil)
+	// 绑定交换机
+	err = ch.ExchangeDeclare("logs-fanout", "fanout", true, false, false, false, nil)
 	if err != nil {
 		log.Println(err)
 		return
 	}
-	q, err := ch.QueueDeclare(*queue, false, false, true, false, nil)
+	// durable=true持久化, exclusive=false连接断开不删除queue
+	q, err := ch.QueueDeclare(*queue, true, false, false, false, nil)
 	if err != nil {
 		log.Println(err)
 		return
 	}
-	err = ch.QueueBind(q.Name, "", "logs", false, nil)
+	err = ch.QueueBind(q.Name, "", "logs-fanout", false, nil)
 	if err != nil {
 		log.Println(err)
 		return
@@ -39,6 +42,6 @@ func main() {
 		return
 	}
 	for msg := range msgs {
-		log.Printf(" [x] %s", msg.Body)
+		fmt.Printf(" [x] %s\n", msg.Body)
 	}
 }

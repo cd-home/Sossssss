@@ -18,7 +18,15 @@ func main() {
 		return
 	}
 	defer ch.Close()
-	q, err := ch.QueueDeclare("hello", false, false, false, false, nil)
+
+	// 持久化
+	err = ch.ExchangeDeclare("logs", "direct", true, false, false, false, nil)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+
+	q, err := ch.QueueDeclare("hello", true, false, false, false, nil)
 	if err != nil {
 		log.Println(err)
 	}
@@ -37,11 +45,11 @@ func main() {
 	}
 	log.Println("Wait.....")
 	for msg := range msgs {
-		log.Printf("Recevied Message: %s", msg.Body)
+		log.Printf("Recevied Message: %s\n", msg.Body)
 		// 处理成功
 		msg.Ack(false)
 
 		// 处理失败
-		msg.Nack(true, true)
+		//msg.Nack(true, true)
 	}
 }
