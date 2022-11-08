@@ -1,10 +1,8 @@
 package main
 
 import (
-	"context"
 	amqp "github.com/rabbitmq/amqp091-go"
 	"log"
-	"time"
 )
 
 func main() {
@@ -14,26 +12,32 @@ func main() {
 		return
 	}
 	defer conn.Close()
-
 	ch, err := conn.Channel()
+	if err != nil {
+		log.Println(err)
+		return
+	}
 	defer ch.Close()
 	q, err := ch.QueueDeclare("hello", false, false, false, false, nil)
 	if err != nil {
 		log.Println(err)
 	}
-	body := "Hello World" + time.Now().Format(time.RFC3339)
-	err = ch.PublishWithContext(
-		context.Background(),
-		"",
+	// 消费消息
+	msgs, err := ch.Consume(
 		q.Name,
+		"",
+		true,  // autoAck 是否自动的确认
+		false, // exclusive 是否只允许一个消费者
 		false,
 		false,
-		amqp.Publishing{
-			ContentType: "text/plain",
-			Body:        []byte(body),
-		},
+		nil,
 	)
 	if err != nil {
 		log.Println(err)
+		return
+	}
+	log.Println("Wait.....")
+	for msg := range msgs {
+		log.Printf("Recevied Message: %s", msg.Body)
 	}
 }
