@@ -49,7 +49,7 @@ func main() {
 		// 处理成功
 		msg.Ack(false)
 
-		// 处理失败
+		// 处理失败, 重回队列 [可记录重回次数; 或者不回记录日志, 开发手工处理]
 		//msg.Nack(true, true)
 	}
 }

@@ -54,7 +54,7 @@ func main() {
 				Body:        []byte(t),
 				// 消息持久化
 				DeliveryMode: amqp.Persistent,
-				// 可以设置消息的过期时间
+				// 可以设置消息的过期时间, 优先级
 			})
 		if err != nil {
 			log.Println(err)
