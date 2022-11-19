@@ -16,11 +16,7 @@ func init() {
 	port := *flag.String("port", "3306", "db port")
 	database := *flag.String("db", "test", "database")
 	dns := user + ":" + password + "@tcp(" + host + ":" + port + ")/" + database + "?charset=utf8mb4"
-	db, err := sqlx.Open("mysql", dns)
-	if err != nil {
-		log.Fatal(err)
-	}
-	err = db.Ping()
+	db, err := sqlx.Connect("mysql", dns)
 	if err != nil {
 		log.Fatal(err)
 	}
