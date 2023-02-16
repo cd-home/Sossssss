@@ -10,6 +10,5 @@ use (
 	./sqlx
 	./zink
 	./zind
-	./viper
-	./pkg
+	./pkgs
 )
