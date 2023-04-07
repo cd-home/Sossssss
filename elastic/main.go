@@ -5,7 +5,6 @@ import (
 	"github.com/elastic/elastic-transport-go/v8/elastictransport"
 	"github.com/elastic/go-elasticsearch/v8"
 	"log"
-	"net"
 	"net/http"
 	"time"
 )
@@ -20,7 +19,6 @@ func main() {
 		Transport: &http.Transport{
 			MaxIdleConnsPerHost:   10,
 			ResponseHeaderTimeout: time.Second,
-			DialContext:           (&net.Dialer{Timeout: time.Second}).DialContext,
 			TLSClientConfig: &tls.Config{
 				MinVersion: tls.VersionTLS12,
 			},

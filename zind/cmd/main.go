@@ -2,7 +2,7 @@ package main
 
 import (
 	"log"
-	"zzchat/internal/router"
+	"zind/internal/router"
 )
 
 func main() {

@@ -1,3 +1,3 @@
-module zzchat
+module zind
 
 go 1.19

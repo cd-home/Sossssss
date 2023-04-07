@@ -5,7 +5,8 @@ use (
 	./grpc
 	./rabbitmq
 	./redis
-	./websocket
+	./rpcx
+	./webskt
 	./elastic
 	./sqlx
 	./zink

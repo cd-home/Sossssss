@@ -12,6 +12,10 @@ func main() {
 	h, _ := hashids.NewWithData(hd)
 	e, _ := h.Encode([]int{10})
 	fmt.Println(e)
+	e, _ = h.Encode([]int{10, 11, 23})
+	fmt.Println(e)
+	e, _ = h.Encode([]int{11111231123213})
+	fmt.Println(len(e))
 
 	d, _ := h.DecodeWithError(e)
 	fmt.Println(d)

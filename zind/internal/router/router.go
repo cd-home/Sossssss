@@ -3,7 +3,7 @@ package router
 import (
 	"github.com/gin-gonic/gin"
 	"redis/client"
-	"zzchat/internal/handler"
+	"zind/internal/handler"
 )
 
 func SetUpRouter() *gin.Engine {
