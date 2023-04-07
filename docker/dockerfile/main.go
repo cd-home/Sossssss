@@ -1,7 +1,7 @@
 package main
 
 import (
-	"fmt"
+	"bytes"
 	"io"
 	"log"
 	"net/http"
@@ -9,12 +9,8 @@ import (
 
 func main() {
 	http.HandleFunc("/", func(rw http.ResponseWriter, r *http.Request) {
-		bs, err := io.ReadAll(r.Body)
-		if err != nil {
-			log.Println(err)
-		}
-		fmt.Fprintf(rw, string(bs))
+		io.Copy(rw, bytes.NewReader([]byte("Hello K8s")))
 	})
+	log.Println("Listen: 8999")
 	_ = http.ListenAndServe(":8999", nil)
-
 }
