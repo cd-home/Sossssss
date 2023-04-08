@@ -13,6 +13,13 @@ spec:
       imagePullPolicy: IfNotPresent
       ports:
         - containerPort: 8999
+      resources:
+        limits:
+          cpu: 10m
+          memory: 20Mi
+        requests:
+          cpu: 10m
+          memory: 20Mi
 ---
 apiVersion: v1
 kind: Service
@@ -40,3 +47,16 @@ spec:
                 port:
                   number: 8999
 ---
+
+# 1. brew install minikube
+# 2. minikube start/stop
+# 3. minikube dashboard
+# 4. minikube addons list/enable
+# 5. minikube tunnel
+
+# kubectl get nodes
+# kubectl get pods -n[namespace] -o wide
+# kubectl apply[delete] -f xx.yaml
+# kubectl get svc[service]
+# kubectl get deploy
+# kubectl get ingress

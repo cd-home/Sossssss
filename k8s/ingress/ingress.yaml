@@ -1,0 +1,27 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: my-app-ingress
+spec:
+  ingressClassName: nginx
+  defaultBackend:
+    service:
+      name: default-http-backend # 指定默认的backend服务, 当服务没有请求到下面rules
+      port:
+        number: 7890
+  rules:
+    - http:
+        paths:
+          - pathType: Prefix
+            path: /my-app
+            backend:
+              service:
+                name: my-app-svc
+                port:
+                  number: 8999
+
+# 上面指定的创建的ingressClassName: nginx 来源前面创建 nginx-ingress-controller
+# apiVersion: networking.k8s.io/v1
+# kind: IngressClass
+#   metadata:
+    # name: nginx
