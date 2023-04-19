@@ -35,7 +35,7 @@ func New(endpoints []string) resolver.Builder {
 func (sd *ServiceDiscovery) Build(target resolver.Target, rcc resolver.ClientConn, opts resolver.BuildOptions) (resolver.Resolver, error) {
 	sd.rcc = rcc
 	sd.services = make(map[string]resolver.Address)
-	prefix := fmt.Sprintf("/%s/%s/", target.Scheme, target.Endpoint)
+	prefix := fmt.Sprintf("/%s/%s/", target.URL.Scheme, target.URL.Path)
 	resp, err := sd.cli.Get(context.Background(), prefix, clientv3.WithPrefix())
 	if err != nil {
 		return nil, err

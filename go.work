@@ -12,4 +12,6 @@ use (
 	./zink
 	./zind
 	./pkgs
+	./k8s/clientapi
+	./k8s/operators/my_nginx
 )

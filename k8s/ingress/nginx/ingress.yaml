@@ -3,6 +3,7 @@ kind: Ingress
 metadata:
   name: my-app-ingress
 spec:
+  # 必须要指定 ingressClassName
   ingressClassName: nginx
   defaultBackend:
     service:

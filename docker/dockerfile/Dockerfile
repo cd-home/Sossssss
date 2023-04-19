@@ -4,9 +4,9 @@ LABEL stage=Build
 WORKDIR /app/build/
 COPY . .
 ENV GOOS=linux CGO_ENABLED=0 GOARCH=arm64 GOPROXY=https://goproxy.cn,direct
-RUN go build -o app -ldflags="-s -w" main.go
+RUN go build -gcflags="-N -l" -o app  main.go
 
-FROM scratch
+FROM alpine:3.14
 LABEL stage=Run
 WORKDIR /app/release/
 COPY --from=Builder /app/build/app /app/release/

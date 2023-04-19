@@ -20,27 +20,8 @@ spec:
       requests:
         cpu: 100m
         memory: 100Mi
-    env:
-    # 当前pod环境变量(不推荐)
-    - name: Mode
-      value: "DEBUG"
-    # 从configmap中加载(推荐)  
-    - name: DB_HOST
-      valueFrom:
-        configMapKeyRef:
-          name: my-nginx-configMap
-          key: DB_HOST
     ports:
     # 容器暴露端口
     - containerPort:  80
       name:  http
-      
-    volumeMounts:
-    - name: localtime
-      mountPath: /etc/localtime
-
-  volumes:
-    - name: localtime
-      hostPath:
-        path: /usr/share/zoneinfo/Asia/Shanghai
   restartPolicy: Always

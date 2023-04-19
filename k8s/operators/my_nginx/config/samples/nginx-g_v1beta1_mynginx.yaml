@@ -1,0 +1,12 @@
+apiVersion: nginx-g.cdhome.com/v1beta1
+kind: MyNginx
+metadata:
+  labels:
+    app.kubernetes.io/name: mynginx
+    app.kubernetes.io/instance: mynginx-sample
+    app.kubernetes.io/part-of: my-nginx
+    app.kubernetes.io/managed-by: kustomize
+    app.kubernetes.io/created-by: my-nginx
+  name: mynginx-sample
+spec:
+  # TODO(user): Add fields here
