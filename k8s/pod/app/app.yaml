@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: myapp
+  labels:
+    app: myapp
+spec:
+  containers:
+    - name: myapp
+      image: registry.yao.com:5000/app:v1
+      imagePullPolicy: IfNotPresent
+      ports:
+        - containerPort: 8999
+  restartPolicy: OnFailure

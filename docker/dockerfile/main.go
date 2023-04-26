@@ -9,7 +9,8 @@ import (
 
 func main() {
 	http.HandleFunc("/", func(rw http.ResponseWriter, r *http.Request) {
-		io.Copy(rw, bytes.NewReader([]byte("Hello K8s")))
+		log.Println(r.URL)
+		_, _ = io.Copy(rw, bytes.NewReader([]byte("Hello K8s")))
 	})
 	log.Println("Listen: 8999")
 	_ = http.ListenAndServe(":8999", nil)
