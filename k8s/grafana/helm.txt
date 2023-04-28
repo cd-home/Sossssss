@@ -1,0 +1,5 @@
+ helm repo add grafana https://grafana.github.io/helm-charts
+ helm repo update
+ helm show values grafana/loki-stack > ./loki-stack.yaml
+ helm install loki grafana/loki-stack --values loki-stack.yaml
+ helm delete loki
