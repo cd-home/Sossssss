@@ -9,13 +9,15 @@ import (
 	"time"
 )
 
+const addr = "http://10.211.55.18:9200"
+
 func main() {
 	cfg := elasticsearch.Config{
 		Addresses: []string{
-			"http://localhost:9200",
+			addr,
 		},
-		Username: "foo",
-		Password: "bar",
+		//Username: "foo",
+		//Password: "bar",
 		Transport: &http.Transport{
 			MaxIdleConnsPerHost:   10,
 			ResponseHeaderTimeout: time.Second,
