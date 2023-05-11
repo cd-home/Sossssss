@@ -36,10 +36,15 @@ func main() {
 
 	address = fmt.Sprintf("%s:%s", *addr, *port)
 
-	s := server.NewServer()
+	// 设置参数
+	s := server.NewServer(
+		server.WithReadTimeout(time.Second),
+		server.WithWriteTimeout(time.Second),
+	)
 
 	addRegistryPlugin(s)
 
+	// metadata一般为空, 可以设置 例如state=inactive 禁用服务  group=my_group
 	_ = s.Register(new(Arith), "")
 
 	s.AuthFunc = auth

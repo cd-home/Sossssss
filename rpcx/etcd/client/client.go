@@ -20,14 +20,18 @@ func main() {
 	// 服务发现
 	d, _ := etcdClient.NewEtcdV3Discovery(*basePath, "Arith", []string{*etcdAddr}, false, nil)
 
-	// 轮询
+	// 轮询等配置;
 	option := client.DefaultOption
+
+	// 断路器
+	option.GenBreaker = func() client.Breaker { return client.NewConsecCircuitBreaker(2, 10*time.Second) }
+
 	// 设置心跳
 	option.Heartbeat = true
 	option.HeartbeatInterval = time.Second
 	xClient := client.NewXClient("Arith", client.Failover, client.RoundRobin, d, option)
 
-	// Auth Token
+	// Auth Token 认证方式
 	xClient.Auth("")
 
 	defer xClient.Close()
