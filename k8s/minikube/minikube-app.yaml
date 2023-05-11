@@ -9,7 +9,7 @@ metadata:
 spec:
   containers:
     - name: my-app
-      image: my-app:latest
+      image: my-app:v1
       imagePullPolicy: IfNotPresent
       ports:
         - containerPort: 8999
