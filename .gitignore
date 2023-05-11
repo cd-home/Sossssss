@@ -21,3 +21,4 @@ docker/jira
 
 bin
 
+k8s/operators
