@@ -9,10 +9,7 @@ use (
 	./webskt
 	./elastic
 	./sqlx
-	./zink
-	./zind
 	./pkgs
-	./zfyne
 	./k8s/clientapi
 	./k8s/operators/my_nginx
 )
