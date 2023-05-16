@@ -16,6 +16,7 @@ func init() {
 	ctx = context.Background()
 }
 
+// TestStringSet 设置 string
 func TestStringSet(t *testing.T) {
 	// cli.SetEx()
 	err := cli.Set(ctx, "stock", 10, time.Second*10).Err()
@@ -24,6 +25,7 @@ func TestStringSet(t *testing.T) {
 	}
 }
 
+// TestStringGet 获取 string
 func TestStringGet(t *testing.T) {
 	value, err := cli.Get(ctx, "stock").Result()
 	if err != nil {
@@ -32,6 +34,7 @@ func TestStringGet(t *testing.T) {
 	t.Log(value)
 }
 
+// TestStringSetNX 不存在即是设置
 func TestStringSetNX(t *testing.T) {
 	for i := 10; i > 0; i-- {
 		// 不存在即设置, 否则不做任何操作
@@ -40,6 +43,6 @@ func TestStringSetNX(t *testing.T) {
 			t.Error(err)
 		}
 	}
-	// 存在时才能设置
+	// key存在时才能设置
 	//cli.SetXX()
 }

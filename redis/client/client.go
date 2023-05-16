@@ -10,7 +10,7 @@ import (
 func NewSimpleClient() *redis.Client {
 	rdb := redis.NewClient(&redis.Options{
 		Network:      "tcp",
-		Addr:         "127.0.0.1:6379",
+		Addr:         "10.211.55.18:6379",
 		Password:     "",
 		DB:           0,
 		PoolSize:     10,
